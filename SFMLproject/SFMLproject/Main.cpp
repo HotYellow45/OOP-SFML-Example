@@ -1,44 +1,53 @@
 #include"SFML/include/SFML/Graphics.hpp"
 
-sf::Vector2f viewSize(1024, 768);
-sf::VideoMode vm(viewSize.x, viewSize.y);
-sf::RenderWindow window(vm, "Hello SFML!!", sf::Style::Default);
+
 
 int main() {
-	
-	sf::RectangleShape rect(sf::Vector2f(500.0f, 100.0f));
-	rect.setFillColor(sf::Color::Red);
-	rect.setPosition(viewSize.x / 2, viewSize.y / 2);
-	rect.setOrigin(sf::Vector2f(rect.getSize().x / 2, rect.getSize().y / 2));
 
-	//Circle
+	sf::RenderWindow window(sf::VideoMode(640, 480), "Bouncing Mushroom");
 
-	sf::CircleShape circle(100);
-	circle.setFillColor(sf::Color::Magenta);
-	circle.setPosition(viewSize.x / 2, viewSize.y / 2);
-	circle.setOrigin(sf::Vector2f(circle.getRadius(), circle.getRadius() / 2));
-
-	//Triangle
-
-	sf::ConvexShape triangle;
-	triangle.setPointCount(3);
-	triangle.setPoint(0, sf::Vector2f(-100, 0));
-	triangle.setPoint(1, sf::Vector2f(0, -100));
-	triangle.setPoint(2, sf::Vector2f(-50, 0));
-	triangle.setFillColor(sf::Color::Black);
-	triangle.setPosition(viewSize.x / 2, viewSize.y / 2);
+	sf::Texture mushroomTexture;
+	mushroomTexture.loadFromFile("Deps/images/Mushroom.png");
+	sf::Sprite mushroom(mushroomTexture);
+	sf::Vector2u size = mushroomTexture.getSize();
+	mushroom.setOrigin(size.x / 2, size.y / 2);
+	sf::Vector2f increment(0.1f, 0.1f);
 
 	//initialise game objects
 	while (window.isOpen())
 	{
 		//handle keyboard events
+		sf::Event event;
+		while (window.pollEvent(event))
+		{
+			if (event.type == sf::Event::Closed)
+			{
+				window.close();
+			}
+		}
+
 		//update game objects
-		window.clear(sf::Color::Blue);
+
+
+
+
+		if ((mushroom.getPosition().x) + (size.x / 2) > window.getSize().x && (increment.x > 0) || (mushroom.getPosition().x / 2) - (size.x / 2) < 0 && (increment.x < 0))
+		{
+			//reverse direction
+			increment.x = -increment.x;
+		}
+		if ((mushroom.getPosition().y) + (size.y / 2) > window.getSize().y && (increment.y > 0) || (mushroom.getPosition().y / 2) - (size.y / 2) < 0 && (increment.y < 0))
+		{
+			//reverse direction
+			increment.y = -increment.y;
+		}
+		mushroom.setPosition(mushroom.getPosition() + increment);
+		window.clear(sf::Color::Magenta);
+		window.draw(mushroom);
+
 		//render game objects
-		window.draw(rect);
-		window.draw(circle);
-		window.draw(triangle);
 		window.display();
 	}
+
 	return 0;
 }
